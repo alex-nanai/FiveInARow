@@ -14,8 +14,14 @@ FiveInARowController.prototype.run = function() {
 }
 
 FiveInARowView = function(canvasSelector) {
+	this.config = {
+		height = 150,
+		width = 150,
+		cellHeight = 50,
+		cellWidth = 50
+	};
+	$(canvasSelector).
 	this.drawContext = $(canvasSelector)[0].getContext('2d');
-	
 }
 
 FiveInARowView.prototype.drawField = function() {
