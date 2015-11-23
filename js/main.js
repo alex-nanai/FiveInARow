@@ -1,29 +1,7 @@
 $(document).ready(function () {
 	var view = new FiveInARowView("#gameField");
-	var controller = new FiveInARowController(view);
+	var model = new Field(5);
+	var controller = new FiveInARowController(model, view);
 
 	controller.run();
 });
-
-FiveInARowController = function(view) {
-	this.view = view;
-}
-
-FiveInARowController.prototype.run = function() {
-	this.view.drawField();
-}
-
-FiveInARowView = function(canvasSelector) {
-	this.drawContext = $(canvasSelector)[0].getContext('2d');
-	
-}
-
-FiveInARowView.prototype.drawField = function() {
-	this.drawContext.fillStyle = "#FF0000";
-	this.drawContext.fillRect(0,0,150,75);
-}
-
-drawField = function(ctx) {
-	var fieldStep = 50;
-
-}
