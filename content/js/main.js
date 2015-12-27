@@ -71,12 +71,12 @@ FiveInARowView = function(canvasSelector) {
     $(canvasSelector)[0].width = this.fullSize;
     this.canvasSelector = canvasSelector;
     this.drawContext = $(this.canvasSelector)[0].getContext('2d');
-    $(canvasSelector).click();
+    $(canvasSelector).click(this.clickHandler);
 }
 
 FiveInARowView.prototype.draw = function() {
     var i;
-    for (i = 0; i<=Config.size; i++) {
+    for (i = 0; i <= Config.size; i++) {
         var stepPx = i * Config.cellSizePx;
         this.drawContext.moveTo(0, stepPx);
         this.drawContext.lineTo(this.fullSize, stepPx);
@@ -84,4 +84,13 @@ FiveInARowView.prototype.draw = function() {
         this.drawContext.lineTo(stepPx, this.fullSize);
     }
     this.drawContext.stroke();
+}
+
+FiveInARowView.prototype.clickHandler = function(e) {
+    var posX = $(this).offset().left;
+    var posY = $(this).offset().top;
+    
+    var logicalX = parseInt((e.pageX - posX) / Config.cellSizePx, 10);
+    var logicalY = parseInt((e.pageY - posY) / Config.cellSizePx, 10);
+    console.log('x:' + logicalX + ', y:' + logicalY);
 }
