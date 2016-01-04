@@ -31,6 +31,15 @@ CellController.prototype.run = function() {
     this.view.draw();
 }
 
+CellController.prototype.processClick = function() {
+    if (this.model.content !== this.ContentOption.EMPTY) {
+        return;
+    }
+    
+    this.model.content = this.ContentOption.X;
+    this.view.draw();
+}
+
 FiveInARowController = function(view) {
     this.view = view;
 	this.cellControllers = []
@@ -42,6 +51,8 @@ FiveInARowController = function(view) {
             this.cellControllers.push(new CellController(cellModel, cellView));
         }
     }
+    
+    this.view.registerClickWatcher(this.processClick);
 }
 
 FiveInARowController.prototype.run = function() {
@@ -51,6 +62,10 @@ FiveInARowController.prototype.run = function() {
 		c.run();
 	});
 };
+
+FiveInARowController.prototype.processClick = function(logicalX, logicalY) {
+    this.cellControllers[logicalX*Config.size + logicalY].processClick(logicalX, logicalY);
+}
 
 CellView = function (x, y, context, model) {
     this.x = x;
@@ -71,7 +86,9 @@ FiveInARowView = function(canvasSelector) {
     $(canvasSelector)[0].width = this.fullSize;
     this.canvasSelector = canvasSelector;
     this.drawContext = $(this.canvasSelector)[0].getContext('2d');
-    $(canvasSelector).click(this.clickHandler);
+    $(canvasSelector).click(clickHandler);
+    
+    this.clickWatchers = [];
 }
 
 FiveInARowView.prototype.draw = function() {
@@ -86,11 +103,24 @@ FiveInARowView.prototype.draw = function() {
     this.drawContext.stroke();
 }
 
-FiveInARowView.prototype.clickHandler = function(e) {
+FiveInARowView.prototype.notifyClickWatchers = function(logicalX, logicalY) {
+    this.clickWatchers.forEach(function(callback) {
+        callback(logicalX, logicalY)
+    });
+}
+
+FiveInARowView.prototype.registerClickWatcher = function(callback) {
+    this.clickWatchers.push(callback);
+}
+
+function clickHandler(e) {
+    // how to map this to view object?
+    
     var posX = $(this).offset().left;
     var posY = $(this).offset().top;
     
     var logicalX = parseInt((e.pageX - posX) / Config.cellSizePx, 10);
     var logicalY = parseInt((e.pageY - posY) / Config.cellSizePx, 10);
-    console.log('x:' + logicalX + ', y:' + logicalY);
+    
+    this.notifyClickWatchers(logicalX, logicalY);
 }
